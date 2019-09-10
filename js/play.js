@@ -377,7 +377,7 @@ Player.prototype.getMusicList = function () {
     listT.style.lineHeight = "30px";
     listT.style.textAlign = "center";
     listT.style.background = "#5CD6D6";
-    listT.innerText = "播放列表";
+    listT.innerText = "热歌榜";
     //头部标题
     listT.appendChild(this.listTtxt);
     this.listTtxt.style.fontSize = "12px";
