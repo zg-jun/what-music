@@ -20,7 +20,7 @@ var Player = function (data) {
     this.lrcTxt = document.createElement("div");
     this.mIndex = 0;//当前音乐索引
     this.flag = true;//判断是否播放
-    this.timer=null;//定时器
+    this.timer = null;//定时器
     //初始化调用
     this.init();
 }
@@ -67,10 +67,10 @@ Player.prototype.createImgBg = function () {
 }
 //创建控件容器
 Player.prototype.createCtrlBg = function () {
-    this.box.appendChild(this.ctrlBg);  
+    this.box.appendChild(this.ctrlBg);
     this.ctrlBg.style.width = 5 / 6 * 100 + "%";
     this.ctrlBg.style.height = "100%";
-    this.ctrlBg.style.cssFloat = "left";    
+    this.ctrlBg.style.cssFloat = "left";
     this.ctrlBg.style.position = "relative";
     this.ctrlBg.style.background = "#fff";
     this.ctrlBg.addEventListener("mouseenter", function () {
@@ -343,7 +343,7 @@ Player.prototype.showProgress = function () {
                     prevLrc.style.fontSize = "16px";
                 }
                 prevLrc = item;
-                item.style.transition="all 0.3s linear";
+                item.style.transition = "all 0.3s linear";
                 item.style.color = "#5CD6D6";
                 item.style.fontSize = "20px";
                 lrcBox.style.transform = "translateY(" + (-item.offsetTop) + "px)";
@@ -449,10 +449,10 @@ Player.prototype.updateLrc = function (lrcData) {
     var lrcBg = this.lrcTxt.querySelector("ul");
     lrcBg.style.marginTop = (this.lrcTxt.offsetHeight / 2) + "px";
     lrcBg.style.transition = "all 0.5s linear";
-	lrcBg.querySelectorAll("li").forEach(function(item){
-		item.style.color="#fff";
-		item.style.fontFamily="mFont";
-	});
+    lrcBg.querySelectorAll("li").forEach(function (item) {
+        item.style.color = "#fff";
+        item.style.fontFamily = "mFont";
+    });
 }
 Player.prototype.getLrcInfo = function (lrcUrl) {
     //请求歌词数据
@@ -462,14 +462,14 @@ Player.prototype.getLrcInfo = function (lrcUrl) {
         dataType: "text",
         async: true,
         success: function (res) {
-            this.updateLrc(parseLyric(res));
+            this.updateLrc(parseLyric(JSON.parse(res).lrc.lyric));
         }.bind(this),
-        error: function (res) {
+        error: function (err) {
             this.updateLrc(["糟糕，暂无歌词"]);
         }.bind(this)
     });
     // 解析歌词
-    function parseLyric(lrc) {
+    function parseLyric (lrc) {
         if (lrc === '') return '';
         var lyrics = lrc.split("\n");
         var lrcText = {};
@@ -482,7 +482,7 @@ Player.prototype.getLrcInfo = function (lrcUrl) {
             for (var k = 0, h = timeRegExpArr.length; k < h; k++) {
                 var t = timeRegExpArr[k];
                 var min = Number(String(t.match(/\[\d*/i)).slice(1)),
-                sec = Number(String(t.match(/\:\d*/i)).slice(1));
+                    sec = Number(String(t.match(/\:\d*/i)).slice(1));
                 var time = min * 60 + sec;
                 lrcText[time] = clause;
             }
@@ -490,17 +490,33 @@ Player.prototype.getLrcInfo = function (lrcUrl) {
         return lrcText;
     }
 }
+Player.prototype.getUrl = function (url, callback) {
+    $.ajax({
+        url,
+        type: "get",
+        dataType: "json",
+        async: true,
+        success: function (res) {
+            callback(res.data[0].url);
+        },
+        error: function (err) {
+            callback(null);
+        }
+    });
+}
 //检查音乐文件是否错误
 Player.prototype.checkMusicError = function () {
     //更新
-    this.audio.src = this.data[this.mIndex].url;
+    this.getUrl(this.data[this.mIndex].url, (res) => {
+        this.audio.src = res;
+    });
     this.img.src = this.data[this.mIndex].cover;
     this.musicName.innerText = this.data[this.mIndex].name || "未知";
     this.singerName.innerText = this.data[this.mIndex].artist || "未知";
     this.getLrcInfo(this.data[this.mIndex].lrc);//更新歌词
     this.changeTitle({
-        musicName:this.musicName.innerText,
-        singerName:this.singerName.innerText
+        musicName: this.musicName.innerText,
+        singerName: this.singerName.innerText
     });
     document.querySelector(".div").style.background = "url(" + this.data[this.mIndex].cover + ") no-repeat center/100% 100%";
     //更新列表选中状态
@@ -510,13 +526,13 @@ Player.prototype.checkMusicError = function () {
     }
     liEle[this.mIndex].style.backgroundColor = "rgba(0,0,0,0.1)";
 }
-Player.prototype.changeTitle=function(title){
-    var titleTxt="-[正在播放]-"+title.singerName+"~"+title.musicName;
+Player.prototype.changeTitle = function (title) {
+    var titleTxt = "-[正在播放]-" + title.singerName + "~" + title.musicName;
     clearInterval(this.timer);
-    this.timer=null;
-    var newTxt=function(){
-        document.title=titleTxt.substring(1,titleTxt.length)+titleTxt.substring(0,1)
-        titleTxt=document.title;
+    this.timer = null;
+    var newTxt = function () {
+        document.title = titleTxt.substring(1, titleTxt.length) + titleTxt.substring(0, 1)
+        titleTxt = document.title;
     }
-    this.timer=setInterval(newTxt,500);
+    this.timer = setInterval(newTxt, 500);
 }
