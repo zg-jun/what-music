@@ -253,7 +253,9 @@ Player.prototype.playPause = function () {
         liEle[this.mIndex].style.backgroundColor = "rgba(0,0,0,0.1)";
     }.bind(this);
     var playAction = function () {
-        this.audio.play();
+        setTimeout(() => {
+            this.audio.play();
+        }, 500);
         this.showProgress();
         this.play.className = "fa fa-pause-circle-o";
     }.bind(this);
@@ -328,7 +330,9 @@ Player.prototype.showProgress = function () {
             this.mIndex++;
             this.mIndex > this.data.length - 1 && (this.mIndex = 0);
             this.getMusicInfo();//重新获取路径
-            this.audio.play();
+            setTimeout(() => {
+                this.audio.play();
+            }, 500);
         }
         // 当前进度/总进度=当前时长/总时长
         var nowProgress = this.audio.currentTime / this.audio.duration;
@@ -416,7 +420,9 @@ Player.prototype.getMusicList = function () {
             that.mIndex = this.index;
             that.getMusicInfo();//重新获取路径
             if (!that.flag) {
-                that.audio.play();
+                setTimeout(() => {
+                    that.audio.play();
+                }, 500);
                 that.showProgress();
                 that.play.className = "fa fa-pause-circle-o";
             }
