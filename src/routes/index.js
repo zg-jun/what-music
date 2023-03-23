@@ -13,18 +13,18 @@ export default [
       {
         path: "/",
         exact: true,
-        render: () => <Redirect to={"/recommend"} />
+        render: () => <Redirect to={"/recommend"} />,
       },
       {
-        path: "recommend",
+        path: "/recommend",
         component: Recommend,
       },
       {
-        path: "singers",
+        path: "/singers",
         component: Singers,
       },
       {
-        path: "rank",
+        path: "/rank",
         component: Rank,
       },
     ],
